@@ -1,0 +1,28 @@
+language: node_js
+
+node_js:
+    - stable
+
+services:
+    - docker 
+
+cache:
+    directories:
+    - node_modules
+
+before_install:
+    - docker build -t chiefbee/client-test -f ./client/Dockerfile.dev ./client
+ 
+script:
+    - docker run -e CI=true chiefbee/client-test npm test
+
+after_success:
+    - docker build -t chiefbee/multi-containers-client ./client
+    - docker build -t chiefbee/multi-containers-server ./server
+    - docker build -t chiefbee/multi-containers-nginx ./nginx
+    - docker build -t chiefbee/multi-containers-worker ./worker
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+    - docker push chiefbee/multi-containers-client
+    - docker push chiefbee/multi-containers-server
+    - docker push chiefbee/multi-containers-nginx
+    - docker push chiefbee/multi-containers-worker
