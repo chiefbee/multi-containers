@@ -26,3 +26,17 @@ after_success:
     - docker push chiefbee/multi-containers-server
     - docker push chiefbee/multi-containers-nginx
     - docker push chiefbee/multi-containers-worker
+
+deploy:
+    verbose: true
+    skip_cleanup: true
+    provider: elasticbeanstalk
+    region: "us-east-1"
+    app: "multi-containers"
+    env: "MultiContainers-env"
+    bucket_name: "elasticbeanstalk-us-east-1-096846156347"
+    bucket_path: "multi-containers"
+    on:
+        branch: master
+    access_key_id: $AWS_ACCESS_KEY
+    secret_access_key: $AWS_SECRET_KEY
